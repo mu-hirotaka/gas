@@ -1,0 +1,105 @@
+function myFunction() {
+  var sheet = SpreadsheetApp.getActive().getSheetByName('ライター応募');
+  var unseenLabelName = 'ライター応募';
+  var unseenLabel = GmailApp.getUserLabelByName(unseenLabelName);
+  var seenLabel = GmailApp.getUserLabelByName("自動処理済み");
+  var lastRow = sheet.getLastRow() + 1;
+  var threads = unseenLabel.getThreads();
+  for(var n in threads) {
+    var thd = threads[n];
+    var msgs = thd.getMessages();
+    threads[n].addLabel(seenLabel);
+    threads[n].removeLabel(unseenLabel);
+    for(m in msgs) {
+      if (m==0) {
+        var msg = msgs[m];
+        var date = Utilities.formatDate(msg.getDate(), 'JST', "yyyy-MM-dd HH:mm:ss");
+        var body = msgs[m].getPlainBody();
+        
+        var nameRegexp = /▼名前([\s\S]*)▼ニックネーム$/m;
+        var nameMatch = nameRegexp.exec(body);
+        var name = nameMatch[1].trim();
+
+        var nicknameRegexp = /▼ニックネーム([\s\S]*)▼メールアドレス$/m;
+        var nicknameMatch = nicknameRegexp.exec(body);
+        var nickname = nicknameMatch[1].trim();
+
+        
+        var mailRegexp = /▼メールアドレス([\s\S]*)▼郵便番号$/m;
+        var mailMatch = mailRegexp.exec(body);
+        var mail = mailMatch[1].trim();
+        
+        var postcodeRegexp = /▼郵便番号([\s\S]*)▼住所$/m;
+        var postcodeMatch = postcodeRegexp.exec(body);
+        var postcode = postcodeMatch[1].trim();
+        
+        var addressRegexp = /▼住所([\s\S]*)▼電話番号$/m;
+        var addressMatch = addressRegexp.exec(body);
+        var address = addressMatch[1].trim();
+        
+        var telNumberRegexp = /▼電話番号([\s\S]*)▼年齢$/m;
+        var telNumberMatch = telNumberRegexp.exec(body);
+        var telNumber = telNumberMatch[1].trim();
+        
+        var ageRegexp = /▼年齢([\s\S]*)▼Twitterアカウント$/m;
+        var ageMatch = ageRegexp.exec(body);
+        var age = ageMatch[1].trim();
+        
+        var twitterRegexp = /▼Twitterアカウント([\s\S]*)▼Facebookアカウント$/m;
+        var twitterMatch = twitterRegexp.exec(body);
+        var twitter = twitterMatch[1].trim();
+        
+        var facebookRegexp = /▼Facebookアカウント([\s\S]*)▼ブログURL$/m;
+        var facebookMatch = facebookRegexp.exec(body);
+        var facebook = facebookMatch[1].trim();
+        
+        var blogUrlRegexp = /▼ブログURL([\s\S]*)▼過去に記事が掲載されたWEB・雑誌等がございましたらご記入ください。$/m;
+        var blogUrlMatch = blogUrlRegexp.exec(body);
+        var blogUrl = blogUrlMatch[1].trim();
+        
+        var provenRecordRegexp = /▼過去に記事が掲載されたWEB・雑誌等がございましたらご記入ください。([\s\S]*)▼本サービスで記事を書く理由は何ですか？$/m;
+        var provenRecordMatch = provenRecordRegexp.exec(body);
+        var provenRecord = provenRecordMatch[1].trim();
+        
+        var reasonRegexp = /▼本サービスで記事を書く理由は何ですか？([\s\S]*)▼どのぐらいの頻度で記事を書く予定ですか？$/m;
+        var reasonMatch = reasonRegexp.exec(body);
+        var reason = reasonMatch[1].trim();
+        
+        var frequencyRegexp = /▼どのぐらいの頻度で記事を書く予定ですか？([\s\S]*)▼主にどんなテーマで執筆したいですか？$/m;
+        var frequencyMatch = frequencyRegexp.exec(body);
+        var frequency = frequencyMatch[1].trim();       
+        
+        var themeRegexp = /▼主にどんなテーマで執筆したいですか？([\s\S]*)▼なぜ、そのテーマで執筆したいのですか？$/m;
+        var themeMatch = themeRegexp.exec(body);
+        var theme = themeMatch[1].trim();      
+        
+        var themeReasonRegexp = /▼なぜ、そのテーマで執筆したいのですか？([\s\S]*)▼本サービスに記事を書くつもりで、参考記事を書いてください。$/m;
+        var themeReasonMatch = themeReasonRegexp.exec(body);
+        var themeReason = themeReasonMatch[1].trim();
+              
+        var articleRegexp = /▼本サービスに記事を書くつもりで、参考記事を書いてください。([\s\S]*)-------------------------------------$/m;
+        var articleMatch = articleRegexp.exec(body);
+        var article = articleMatch[1].trim();     
+        
+        sheet.getRange(lastRow,2).setValue(date);
+        sheet.getRange(lastRow,3).setValue(name);
+        sheet.getRange(lastRow,4).setValue(nickname);
+        sheet.getRange(lastRow,5).setValue(mail);
+        sheet.getRange(lastRow,6).setValue(postcode);
+        sheet.getRange(lastRow,7).setValue(address);
+        sheet.getRange(lastRow,8).setValue(telNumber);        
+        sheet.getRange(lastRow,9).setValue(age);
+        sheet.getRange(lastRow,10).setValue(twitter);
+        sheet.getRange(lastRow,11).setValue(facebook);
+        sheet.getRange(lastRow,12).setValue(blogUrl);
+        sheet.getRange(lastRow,13).setValue(provenRecord);
+        sheet.getRange(lastRow,14).setValue(reason);
+        sheet.getRange(lastRow,15).setValue(frequency);
+        sheet.getRange(lastRow,16).setValue(theme);
+        sheet.getRange(lastRow,17).setValue(themeReason);
+        sheet.getRange(lastRow,18).setValue(article);        
+        lastRow++;
+      }
+    }
+  }
+}
