@@ -41,7 +41,7 @@ function myFunction() {
         sheet.getRange(lastRow,10).setValue(res[9]);
         sheet.getRange(lastRow,11).setValue(res[10]);
         var tmp = "";
-        for (var i=11; i <= resSize - 1; i++) {
+        for (var i=11; i <= resSize - 3; i++) {
           tmp = tmp + res[i] + '\n';
         }
         sheet.getRange(lastRow,12).setValue(tmp);
