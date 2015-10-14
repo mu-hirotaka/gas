@@ -157,3 +157,56 @@ function freePaperNineFunction() {
   }
   PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
 }
+
+function freePaperMeetingFunction() {
+  var newCronTime = new Date();
+  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  if (cronTime) {
+    cronTime = Date.parse(cronTime);
+  } else {
+    cronTime = newCronTime.getTime();
+  }
+//  cronTime = 0;
+  
+  var sheet = SpreadsheetApp.getActive().getSheetByName('フリーペーパー説明会');
+  // ラベル名を適宜変更
+  var unseenLabelName = 'フリーペーパー説明会';
+  var unseenLabel = GmailApp.getUserLabelByName(unseenLabelName);
+  var seenLabel = GmailApp.getUserLabelByName("自動処理済み");
+  var lastRow = sheet.getLastRow() + 1;
+  var threads = unseenLabel.getThreads();
+  for(var n in threads) {
+    var thd = threads[n];
+    var msgs = thd.getMessages();
+    threads[n].addLabel(seenLabel);
+    threads[n].removeLabel(unseenLabel);
+    for(m in msgs) {
+      var msg = msgs[m];
+      var dt = msg.getDate();
+      if (dt.getTime() >= cronTime) {        
+        var date = Utilities.formatDate(dt, 'JST', "yyyy-MM-dd HH:mm:ss");
+        var body = msgs[m].getPlainBody();
+        var res  = body.split('\n')
+        // resの数を適宜変更
+        var resSize = res.length;
+        sheet.getRange(lastRow,1).setValue(date);
+        sheet.getRange(lastRow,3).setValue(res[0]);
+        sheet.getRange(lastRow,4).setValue(res[2]);        
+        sheet.getRange(lastRow,5).setValue(res[3]);        
+        sheet.getRange(lastRow,6).setValue(res[4]);
+        sheet.getRange(lastRow,7).setValue(res[5]);     
+        sheet.getRange(lastRow,8).setValue(res[6]);
+        sheet.getRange(lastRow,9).setValue(res[8]);
+        sheet.getRange(lastRow,10).setValue(res[9]);
+        sheet.getRange(lastRow,11).setValue(res[10]);
+        var tmp = "";
+        for (var i=11; i <= resSize - 3; i++) {
+          tmp = tmp + res[i] + '\n';
+        }
+        sheet.getRange(lastRow,12).setValue(tmp);
+        lastRow++;
+      }
+    }
+  }
+  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+}
