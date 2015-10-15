@@ -1,0 +1,16 @@
+function submitForm(e){
+  var itemResponses = e.response.getItemResponses();
+  var message = '';
+  for (var i = 0; i < itemResponses.length; i++) {
+    var itemResponse = itemResponses[i];
+    var question = itemResponse.getItem().getTitle();
+    var answer = itemResponse.getResponse();
+    message += (i + 1).toString() + '. ' + question + ': ' + answer + '\n';
+  }
+  var address = 'xxx@yyy.com';
+  var title = 'お問い合せフォームが送信されました';
+  var content = '担当者はすみやかに確認をお願いします。\n\n' + message;
+  GmailApp.sendEmail(address, title, content,  {
+    from: 'xxx@yyy.com',
+  });
+}
