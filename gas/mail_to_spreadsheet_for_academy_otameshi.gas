@@ -1,6 +1,7 @@
 function myFunction() {
+  var propertyName = 'latest_crontime_for_myFunction';
   var newCronTime = new Date();
-  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
   if (cronTime) {
     cronTime = Date.parse(cronTime);
   } else {
@@ -48,12 +49,13 @@ function myFunction() {
       }
     }
   }
-  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
 }
 
 function shukatsuFunction() {
+  var propertyName = 'latest_crontime_for_shukatsuFunction';
   var newCronTime = new Date();
-  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
   if (cronTime) {
     cronTime = Date.parse(cronTime);
   } else {
@@ -101,12 +103,13 @@ function shukatsuFunction() {
       }
     }
   }
-  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
 }
 
 function freePaperNineFunction() {
+  var propertyName = 'latest_crontime_for_freePaperNineFunction';
   var newCronTime = new Date();
-  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
   if (cronTime) {
     cronTime = Date.parse(cronTime);
   } else {
@@ -155,12 +158,13 @@ function freePaperNineFunction() {
       }
     }
   }
-  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
 }
 
 function freePaperMeetingFunction() {
+  var propertyName = 'latest_crontime_for_freePaperMeetingFunction';
   var newCronTime = new Date();
-  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
   if (cronTime) {
     cronTime = Date.parse(cronTime);
   } else {
@@ -208,5 +212,5 @@ function freePaperMeetingFunction() {
       }
     }
   }
-  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
 }
