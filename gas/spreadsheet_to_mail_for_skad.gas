@@ -1,0 +1,66 @@
+function adMainProcess() {
+  var sheet = SpreadsheetApp.getActive().getSheetByName('ピックアップ特集');
+  var data = sheet.getDataRange().getValues(); // 全件取得
+  
+  var records = [
+    { start_date : data[2][4], end_date : data[2][5], main_index : 2, sub_index : 2 }, // 新着PRの1
+    { start_date : data[3][4], end_date : data[3][5], main_index : 3, sub_index : 2 }, // 新着PRの2
+    { start_date : data[4][4], end_date : data[4][5], main_index : 4, sub_index : 2 }, // 新着PRの3    
+    { start_date : data[7][4], end_date : data[7][5], main_index : 7, sub_index : 7 }, // ピックアップ1の1
+    { start_date : data[8][4], end_date : data[8][5], main_index : 8, sub_index : 7 }, // ピックアップ1の2
+    { start_date : data[9][4], end_date : data[9][5], main_index : 9, sub_index : 7 }, // ピックアップ1の3
+    { start_date : data[10][4], end_date : data[10][5], main_index : 10, sub_index : 10 }, // ピックアップ2の1
+    { start_date : data[11][4], end_date : data[11][5], main_index : 11, sub_index : 10 }, // ピックアップ2の2
+    { start_date : data[12][4], end_date : data[12][5], main_index : 12, sub_index : 10 }, // ピックアップ2の3
+    { start_date : data[13][4], end_date : data[13][5], main_index : 13, sub_index : 13 }, // ピックアップ3の1
+    { start_date : data[14][4], end_date : data[14][5], main_index : 14, sub_index : 13 }, // ピックアップ3の2
+    { start_date : data[15][4], end_date : data[15][5], main_index : 15, sub_index : 13 }, // ピックアップ3の3
+  ];
+
+  for (var i = 0; i < records.length; i++) {
+    var record = records[i];
+    var main_index = record.main_index;
+    if (record.start_date && is_previous_day(record.start_date)) {
+      var client = "【クライアント】" + data[main_index][2];
+      var article_title = "【タイトル】" + data[main_index][3];
+      var article_area = "【指定枠】" + data[record.sub_index][0] + "の" + data[main_index][1];
+      var contact_name = "【担当者】" + data[main_index][7];
+      var etc = "【備考】" + data[main_index][6];
+      var title = 'SK広告掲載開始依頼(システム自動送信)';
+      var content = 'SK広告掲載開始、前日です。\n担当者はご確認お願いします。\n\n'
+                  + client + "\n" + article_title + "\n" + article_area + "\n" + contact_name + "\n" + etc;
+      sendMail(title, content);
+    }
+    if (record.end_date && is_previous_day(record.end_date)) {
+      var client = "【クライアント】" + data[main_index][2];
+      var article_title = "【タイトル】" + data[main_index][3];
+      var article_area = "【指定枠】" + data[record.sub_index][0] + "の" + data[main_index][1];;
+      var contact_name = "【担当者】" + data[main_index][7];
+      var etc = "【備考】" + data[main_index][6];
+      var title = 'SK広告掲載終了依頼(システム自動送信)';
+      var content = 'SK広告掲載終了、前日です。\n担当者はご確認お願いします。\n\n'
+                  + client + "\n" + article_title + "\n" + article_area + "\n" + contact_name + "\n" + etc;
+      sendMail(title, content);
+    }
+  }
+}
+
+function is_previous_day(date) {
+  var now = new Date();
+  // 比較しやすいように0時に設定
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  var tmp_date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1, 0, 0, 0);
+  if (today.toString() == tmp_date.toString()) {
+    return true;
+  }
+  return false;
+}
+
+function sendMail(title, content){
+  var address = 'xxx@yyy.com';
+  GmailApp.sendEmail(address, title, content,  {
+    from: 'xxx@yyy.com',
+    cc: 'xxx@yyy.com',
+  });
+}
+
