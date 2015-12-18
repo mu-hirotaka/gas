@@ -35,8 +35,9 @@ function myFunction() {
         sheet.getRange(lastRow,6).setValue(res[4]);     
         sheet.getRange(lastRow,7).setValue(res[5]);
         sheet.getRange(lastRow,8).setValue(res[6]);
-        sheet.getRange(lastRow,9).setValue(res[8]);
+        sheet.getRange(lastRow,9).setValue(res[7]);
         sheet.getRange(lastRow,10).setValue(res[9]);
+        sheet.getRange(lastRow,11).setValue(res[10]);
         lastRow++;
       }
     }
