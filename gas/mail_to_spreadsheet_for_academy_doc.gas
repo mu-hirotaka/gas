@@ -1,6 +1,7 @@
-function myFunction() {
+function normal() {
+  var propertyName = 'normal_latest_crontime';
   var newCronTime = new Date();
-  var cronTime = PropertiesService.getScriptProperties().getProperty('latest_crontime');
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
   if (cronTime) {
     cronTime = Date.parse(cronTime);
   } else {
@@ -42,5 +43,49 @@ function myFunction() {
       }
     }
   }
-  PropertiesService.getScriptProperties().setProperty('latest_crontime', newCronTime);
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
+}
+
+function download() {
+  var propertyName = 'download_latest_crontime';
+  var newCronTime = new Date();
+  var cronTime = PropertiesService.getScriptProperties().getProperty(propertyName);
+  if (cronTime) {
+    cronTime = Date.parse(cronTime);
+  } else {
+    cronTime = newCronTime.getTime();
+  }
+  
+  var sheet = SpreadsheetApp.getActive().getSheetByName('資料請求（ダウンロード）');
+  // ラベル名を適宜変更
+  var unseenLabelName = '資料請求ダウンロード';
+  var unseenLabel = GmailApp.getUserLabelByName(unseenLabelName);
+  Logger.log(unseenLabel);
+  var seenLabel = GmailApp.getUserLabelByName("自動処理済み");
+  var lastRow = sheet.getLastRow() + 1;
+  var threads = unseenLabel.getThreads();
+  for(var n in threads) {
+    var thd = threads[n];
+    var msgs = thd.getMessages();
+    threads[n].addLabel(seenLabel);
+    threads[n].removeLabel(unseenLabel);
+    for(m in msgs) {
+      var msg = msgs[m];
+      var dt = msg.getDate();
+      if (dt.getTime() >= cronTime) {        
+        var date = Utilities.formatDate(dt, 'JST', "yyyy-MM-dd HH:mm:ss");
+        var body = msgs[m].getPlainBody();
+        var res  = body.split('\n')
+        // resの数を適宜変更
+        sheet.getRange(lastRow,1).setValue(date);
+        sheet.getRange(lastRow,2).setValue(res[0]);
+        sheet.getRange(lastRow,3).setValue(res[2]);
+        sheet.getRange(lastRow,4).setValue(res[3]);
+        sheet.getRange(lastRow,5).setValue(res[4]);  
+        sheet.getRange(lastRow,6).setValue(res[5]);
+        lastRow++;
+      }
+    }
+  }
+  PropertiesService.getScriptProperties().setProperty(propertyName, newCronTime);
 }
