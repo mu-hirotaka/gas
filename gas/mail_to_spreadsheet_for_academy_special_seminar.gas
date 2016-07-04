@@ -173,7 +173,7 @@ function shortCourse() {
   }
 //  cronTime = 0;
   
-  var sheet = SpreadsheetApp.getActive().getSheetByName('短期講座受講生');
+  var sheet = SpreadsheetApp.getActive().getSheetByName('短期講座');
   // ラベル名を適宜変更
   var unseenLabelName = '短期講座';
   var unseenLabel = GmailApp.getUserLabelByName(unseenLabelName);
