@@ -2,7 +2,7 @@ cheerio = require 'cheerio'
 phantom = require 'phantom'
 
 module.exports = (robot) ->
-  robot.hear /(http.*)/i, (msg) ->
+  robot.hear /^(http.*)/i, (msg) ->
     url = msg.match[1]
     phantom.create().then (ph) ->
       ph.createPage().then (page) ->
