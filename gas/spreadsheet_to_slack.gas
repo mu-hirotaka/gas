@@ -1,0 +1,64 @@
+function checkCellStatus() { 
+  var sheet = SpreadsheetApp.getActiveSheet(); //シートを取得
+  var cell = sheet.getActiveCell(); //アクティブセルを取得
+
+  //アクティブセルが監視対象かを判定
+  if( underscoreGS._contains(getMonitoringSheetNames(), sheet.getName())
+    && cell.getColumn() == getMonitoringCellColumn() 
+    && cell.getValue() != "" ) { 
+      postSlack(formatSlackMessage(sheet, cell));
+  }
+}
+// 監視対象のカラム番号
+function getMonitoringCellColumn() {
+  return 4;
+}
+// 監視対象のシート
+function getMonitoringSheetNames() {
+  return ["【試験運用】SK(SP)3月","【試験運用】SK(PC)3月"];
+}
+function formatSlackMessage(sheet, cell) {
+  var currentRow = cell.getRow();
+  var menu = sheet.getRange('A' + currentRow).getValue();
+  var client = sheet.getRange('B' + currentRow).getValue();
+  var name = sheet.getRange('C' + currentRow).getValue();
+  var status = sheet.getRange('D' + currentRow).getValue();
+  var type = sheet.getRange('E' + currentRow).getValue();
+  var impression = sheet.getRange('F' + currentRow).getValue();
+  var startDate = sheet.getRange('G' + currentRow).getValue();
+  var endDate = sheet.getRange('H' + currentRow).getValue();
+  var remarks = sheet.getRange('I' + currentRow).getValue();
+  var message = addLineBreak(sheet.getName());
+  message = addLineBreak(message + 'メニュー: ' + menu);
+  message = addLineBreak(message + 'クライアント: ' + client);
+  message = addLineBreak(message + '担当者： ' + name);
+  message = addLineBreak(message + 'ステータス： ' + status);
+  message = addLineBreak(message + '保証： ' + type);
+  message = addLineBreak(message + 'imp： ' + impression);
+  message = message + '期間: ' + (startDate.getMonth() + 1) + '/' + startDate.getDate() + '〜' + (endDate.getMonth() + 1) + '/' + endDate.getDate();
+  if (remarks != '') {
+    message = addLineBreak(message) + '備考: ' + remarks;
+  }  
+  return message;
+}
+function addLineBreak(message) {
+  return message + String.fromCharCode(10);
+}
+// 監視対象の行番号閾値
+// シートによってバラバラっぽいので最初は特に制限なしで運用してみる
+//function getMonitoringRowThreshold() {
+//  return 9;
+//}
+function postSlack(message) {
+  var payload  = {
+    'text'      : message,
+  };
+  var options = {
+    'method'      : 'post'                 ,
+    'contentType' : 'application/json'     ,
+    'payload'     : JSON.stringify(payload),
+  };
+  // 事前にプロジェクトのプロパティにslack post用urlを設定しておくこと
+  var url = PropertiesService.getScriptProperties().getProperty('slackUrl');
+  UrlFetchApp.fetch(url, options);
+}
