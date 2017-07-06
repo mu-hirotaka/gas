@@ -1,0 +1,76 @@
+function debug() {
+
+}
+
+ID_COL_NO = 9; 
+function main() {
+  var notifications = getNotifications().reverse();
+  var sheet = SpreadsheetApp.getActive().getSheetByName('notifications');
+  for each(var notification in notifications) {
+    if (isValidRecord(notification)) {
+      saveRecord(sheet,notification,getRecordRowNo(sheet,notification));      
+    }
+  }
+}
+function getNotifications() {
+  var authValue = PropertiesService.getScriptProperties().getProperty('authorization');
+  var headers = {
+    'authorization' : authValue    
+  };
+  var options = {
+    "headers":headers
+  };
+  var url = PropertiesService.getScriptProperties().getProperty('url');
+  var res = UrlFetchApp.fetch(url,options);
+  var res_json = JSON.parse(res.getContentText());
+  return res_json["notifications"];
+}
+function unixtimeToDateStr(unixtime) {
+  var d = new Date(unixtime*1000);
+  var year = d.getFullYear();
+  var month = ( (d.getMonth() + 1) < 10 ) ? '0' + (d.getMonth() + 1) : (d.getMonth() + 1);
+  var day = ( d.getDate < 10 ) ? '0' + d.getDate() : d.getDate();
+  var hour = ( d.getHours < 10 ) ? '0' + d.getHours() : d.getHours();
+  var minute = ( d.getMinutes < 10 ) ? '0' + d.getMinutes() : d.getMinutes();  
+  var second = ( d.getSeconds < 10 ) ? '0' + d.getSeconds() : d.getSeconds();  
+  return (year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second); 
+}
+function getRecordRowNo(sheet, record) {
+  if (isNewRecord(sheet, record)) {
+    return sheet.getLastRow()+1;
+  } else {
+    return findRow(sheet,record["id"],ID_COL_NO);
+  }
+}
+function isValidRecord(record) {
+  if (record["canceled"] == true) { return false }
+  if (record["included_segments"].length > 0 && record["included_segments"][0] == "TestUsers") { return false }
+  return true;
+}
+function saveRecord(sheet, record, rowNo) {
+  sheet.getRange(rowNo,1).setValue(unixtimeToDateStr(record["send_after"]));
+  sheet.getRange(rowNo,2).setValue("en" in record["headings"] ? record["headings"]["en"] : "");
+  sheet.getRange(rowNo,3).setValue(record["contents"]["en"]);
+  sheet.getRange(rowNo,4).setValue(record["successful"]);
+  sheet.getRange(rowNo,5).setValue(record["converted"]);
+  sheet.getRange(rowNo,7).setValue(record["isIos"] == true ? "iOS" : "Android");
+  sheet.getRange(rowNo,8).setValue("movieURL" in record["data"] ? "動画" : "記事");  
+  sheet.getRange(rowNo,9).setValue(record["id"]);
+  sheet.getRange(rowNo,11).setValue(record["included_segments"].join());
+}
+function isNewRecord(sheet, record) {
+  if (findRow(sheet,record["id"],ID_COL_NO) == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function findRow(sheet,val,col){
+  var records = sheet.getDataRange().getValues();
+  for(var i=1;i<records.length;i++){
+    if(records[i][col-1] === val){
+      return i+1;
+    }
+  }
+  return 0;
+}
