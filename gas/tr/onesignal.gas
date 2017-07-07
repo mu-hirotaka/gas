@@ -1,7 +1,7 @@
 function debug() {
 
 }
-
+DATE_COL_NO = 1;
 ID_COL_NO = 9; 
 function main() {
   var notifications = getNotifications().reverse();
@@ -37,7 +37,8 @@ function unixtimeToDateStr(unixtime) {
 }
 function getRecordRowNo(sheet, record) {
   if (isNewRecord(sheet, record)) {
-    return sheet.getLastRow()+1;
+    return findRow(sheet,"",DATE_COL_NO);
+//    return sheet.getLastRow()+1;
   } else {
     return findRow(sheet,record["id"],ID_COL_NO);
   }
