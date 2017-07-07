@@ -58,6 +58,7 @@ function saveRecord(sheet, record, rowNo) {
   sheet.getRange(rowNo,8).setValue("movieURL" in record["data"] ? "動画" : "記事");  
   sheet.getRange(rowNo,9).setValue(record["id"]);
   sheet.getRange(rowNo,11).setValue(record["included_segments"].join());
+  sheet.getRange(rowNo,12).setValue(record["data"]["target"]);
 }
 function isNewRecord(sheet, record) {
   if (findRow(sheet,record["id"],ID_COL_NO) == 0) {
